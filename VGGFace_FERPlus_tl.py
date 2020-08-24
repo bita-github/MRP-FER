@@ -35,7 +35,7 @@ from sklearn.metrics import accuracy_score, recall_score, precision_score, f1_sc
 
 plt.style.use('ggplot')
 
-#functions for visualization of the results.
+#functions for visualization of the results
 
 def plot_accuracy(model_out):
     """
@@ -81,7 +81,7 @@ def plot_loss(model_out):
 
 def plot_precision_recall(targets, preds):
     """
-        Function to plot the precision and recall of a model per class.
+        Function to plot the precision and recall of a model per class
         Parameters:
             targets: the target values, list
             preds: the predicted values, list
@@ -117,7 +117,7 @@ def plot_precision_recall(targets, preds):
 
 def plot_wrong_predictions_heatmap(targets, preds):
     """
-        Function to plot a heatmap of the number of wrong prediction per pair of classes.
+        Function to plot a heatmap of the number of wrong prediction per pair of classes
         Parameters:    
             targets: the target values, list
             preds: the predicted values, list
@@ -182,7 +182,7 @@ def my_generator(gen_args, b_size=64, im_size = (224,224)):
 trn_lbls = pd.read_csv('/home/ubuntu/Notebooks/Datasets/FERPlus_occ/train_label.csv')
 
 
-# Whether to retrain the model or load a previously saved model.
+# Whether to retrain the model or load a previously saved model
 retrain = False
 cp_dir = '/home/ubuntu/Notebooks/Models/FER_VGGFace16.h5'
 log_dir = '/home/ubuntu/Notebooks/Models/FER_VGGFace16_log.csv'
@@ -265,13 +265,13 @@ else:
     best_FER_VGGFace16.summary()
 
 
-# Fitting the model on the custom generator.
+# Fitting the model on the custom generator
 if retrain:
     # Defining paramters for image augmentation
     generator_args = {'rescale' : 1./255,
                       'horizontal_flip':True}
     train_iter, val_iter, test_iter, weights = my_generator(generator_args, b_size=64)
-    # Save model logs and the best model to a file.
+    # Save model logs and the best model to a file
     model_log = CSVLogger(log_dir, separator=',') 
     model_cp = ModelCheckpoint(cp_dir, save_best_only=True,
                                monitor='val_loss', mode='min')
