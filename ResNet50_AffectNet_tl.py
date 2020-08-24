@@ -6,7 +6,9 @@ from keras.preprocessing.image import ImageDataGenerator
 import numpy as np
 import pandas as pd
 from tensorflow.keras import regularizers
-from keras.layers import Flatten, Dense, Input, GlobalAveragePooling2D,                          GlobalMaxPooling2D, Activation, Conv2D, MaxPooling2D, BatchNormalization,                         AveragePooling2D, Reshape, Permute, multiply
+from keras.layers import Flatten, Dense, Input, GlobalAveragePooling2D,\
+                         GlobalMaxPooling2D, Activation, Conv2D, MaxPooling2D, BatchNormalization,\
+                         AveragePooling2D, Reshape, Permute, multiply
 from keras_applications.imagenet_utils import _obtain_input_shape
 from keras.utils import layer_utils
 from keras.utils.data_utils import get_file
