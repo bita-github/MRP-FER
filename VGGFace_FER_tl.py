@@ -35,7 +35,8 @@ from sklearn.metrics import accuracy_score, recall_score, precision_score, f1_sc
 
 plt.style.use('ggplot')
 
-#functions for visualization of the results
+
+#functions for visualization of the results.
 
 def plot_accuracy(model_out):
     """
@@ -81,7 +82,7 @@ def plot_loss(model_out):
 
 def plot_precision_recall(targets, preds):
     """
-        Function to plot the precision and recall of a model per class
+        Function to plot the precision and recall of a model per class.
         Parameters:
             targets: the target values, list
             preds: the predicted values, list
@@ -117,7 +118,7 @@ def plot_precision_recall(targets, preds):
 
 def plot_wrong_predictions_heatmap(targets, preds):
     """
-        Function to plot a heatmap of the number of wrong prediction per pair of classes
+        Function to plot a heatmap of the number of wrong prediction per pair of classes.
         Parameters:    
             targets: the target values, list
             preds: the predicted values, list
@@ -179,13 +180,16 @@ def my_generator(gen_args, b_size=64, im_size = (224,224)):
     
         return train_it, val_it, test_it, class_weights_dict
 
+
+
 trn_lbls = pd.read_csv('/home/ubuntu/Notebooks/Datasets/FERPlus_occ/train_label.csv')
 
 
-# Whether to retrain the model or load a previously saved model
+# Whether to retrain the model or load a previously saved model.
 retrain = False
 cp_dir = '/home/ubuntu/Notebooks/Models/FER_VGGFace16.h5'
 log_dir = '/home/ubuntu/Notebooks/Models/FER_VGGFace16_log.csv'
+
 
 
 if retrain:    
@@ -204,22 +208,28 @@ if retrain:
                          padding='same', name='conv2_1',  kernel_regularizer=l2(5*1e-4)))
     VGGFace16.add(layers.Conv2D(filters=128, kernel_size=(3, 3), activation='relu',
                          padding='same', name='conv2_2',  kernel_regularizer=l2(5*1e-4)))
+    VGGFace16.add(layers.Dropout(0.1))
     VGGFace16.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2), name='pool2'))
 
     # Block 3
     VGGFace16.add(layers.Conv2D(filters=256, kernel_size=(3, 3), activation='relu',
                          padding='same', name='conv3_1',  kernel_regularizer=l2(5*1e-4)))
+    VGGFace16.add(layers.Dropout(0.15))
     VGGFace16.add(layers.Conv2D(filters=256, kernel_size=(3, 3), activation='relu',
                          padding='same', name='conv3_2',  kernel_regularizer=l2(5*1e-4)))
+    VGGFace16.add(layers.Dropout(0.2))
     VGGFace16.add(layers.Conv2D(filters=256, kernel_size=(3, 3), activation='relu',
                          padding='same', name='conv3_3',  kernel_regularizer=l2(5*1e-4)))
+    VGGFace16.add(layers.Dropout(0.25))
     VGGFace16.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2), name='pool3'))
 
     # Block 4
     VGGFace16.add(layers.Conv2D(filters=512, kernel_size=(3, 3), activation='relu',
                          padding='same', name='conv4_1',  kernel_regularizer=l2(5*1e-4)))
+    VGGFace16.add(layers.Dropout(0.3))
     VGGFace16.add(layers.Conv2D(filters=512, kernel_size=(3, 3), activation='relu',
                          padding='same', name='conv4_2',  kernel_regularizer=l2(5*1e-4)))
+    VGGFace16.add(layers.Dropout(0.35))
     VGGFace16.add(layers.Conv2D(filters=512, kernel_size=(3, 3), activation='relu',
                          padding='same', name='conv4_3',  kernel_regularizer=l2(5*1e-4)))
     VGGFace16.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2), name='pool4'))
@@ -227,10 +237,13 @@ if retrain:
     # Block 5
     VGGFace16.add(layers.Conv2D(filters=512, kernel_size=(3, 3), activation='relu',
                          padding='same', name='conv5_1',  kernel_regularizer=l2(5*1e-4)))
+    VGGFace16.add(layers.Dropout(0.4))
     VGGFace16.add(layers.Conv2D(filters=512, kernel_size=(3, 3), activation='relu',
                          padding='same', name='conv5_2',kernel_regularizer=l2(5*1e-4)))
+    VGGFace16.add(layers.Dropout(0.45))
     VGGFace16.add(layers.Conv2D(filters=512, kernel_size=(3, 3), activation='relu',
                          padding='same', name='conv5_3',  kernel_regularizer=l2(5*1e-4)))
+    VGGFace16.add(layers.Dropout(0.5))
     VGGFace16.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2), name='pool5'))
 
     # Classification block
@@ -251,7 +264,9 @@ if retrain:
     last_layer = VGGFace16.get_layer('pool5').output
     x = Flatten(name='flatten')(last_layer)
     x = layers.Dense(hidden_dim, activation='relu', name='fc6')(x)
+    x= layers.Dropout(0.5)(x)
     x = layers.Dense(hidden_dim, activation='relu', name='fc7')(x)
+    x= layers.Dropout(0.5)(x)
     out = layers.Dense(nb_class, activation='softmax', name='fc8')(x)
     FER_VGGFace16 = tensorflow.keras.Model(VGGFace16.input, out )
     
@@ -265,13 +280,13 @@ else:
     best_FER_VGGFace16.summary()
 
 
-# Fitting the model on the custom generator
+# Fitting the model on the custom generator.
 if retrain:
     # Defining paramters for image augmentation
     generator_args = {'rescale' : 1./255,
                       'horizontal_flip':True}
     train_iter, val_iter, test_iter, weights = my_generator(generator_args, b_size=64)
-    # Save model logs and the best model to a file
+    # Save model logs and the best model to a file.
     model_log = CSVLogger(log_dir, separator=',') 
     model_cp = ModelCheckpoint(cp_dir, save_best_only=True,
                                monitor='val_loss', mode='min')
@@ -288,17 +303,14 @@ if retrain:
                   callbacks=[model_cp, model_log, rlrop, stop])
     best_FER_VGGFace16 = load_model(cp_dir)  # Retrieve the best model.
 
-
-
 out = pd.read_csv(log_dir, delimiter=',')
 plot_accuracy(out)
 plot_loss(out)
 
-
 #create test generator 
 test_datagen = ImageDataGenerator(rescale=1./255)
 test_iter= test_datagen.flow_from_directory(
-        '../data/FERPlus_occ/test/',
+        '../Datasets/FERPlus_occ/test/',
         target_size=(224, 224),
         shuffle = False,
         class_mode=None,
@@ -337,6 +349,4 @@ plot_precision_recall(list(y_test), list(y_preds))
 plot_wrong_predictions_heatmap(list(y_test), list(y_preds))
 fig, ax = plt.subplots(figsize=(10,5))        
 sns.heatmap(cf_matrix, annot=True, cmap='Blues', linewidths=10, fmt='g', ax=ax); 
-
-
 
