@@ -42,6 +42,7 @@ import keras
 
 plt.style.use('ggplot')
 
+
 #batch generator reference: https://keras.io/preprocessing/image/
 
 def my_generator(gen_args, b_size=64, im_size = (224,224)):
